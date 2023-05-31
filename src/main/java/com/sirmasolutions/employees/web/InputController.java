@@ -29,6 +29,6 @@ public class InputController {
 
         this.seedService.seedData(file);
 
-        return "redirect:/";
+        return "redirect:/results";
     }
 }

@@ -4,9 +4,6 @@ spring:
     url: "jdbc:mysql://localhost:3306/employees?allowPublicKeyRetrieval=true&useSSL=false&createDatabaseIfNotExist=true"
     username: root
     password: 181315durwo
-  sql:
-    init:
-      mode: always
   jpa:
     # Choose either MySQL 8 or MySQL 5 below
     # For MySQL 8
@@ -14,12 +11,13 @@ spring:
     #For MySQL 5
     #database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: create
     open-in-view: false
     properties:
       hibernate:
         format_sql: true
     defer-datasource-initialization: true
+    show-sql: true
 
 server:
   port: 8080

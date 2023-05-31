@@ -1,5 +1,6 @@
 package com.sirmasolutions.employees.service;
 
+import com.sirmasolutions.employees.model.entity.TeamsWithDaysOfWork;
 import com.sirmasolutions.employees.model.entity.Record;
 import com.sirmasolutions.employees.model.entity.Team;
 import com.sirmasolutions.employees.repository.RecordRepository;
@@ -8,8 +9,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.time.temporal.ChronoUnit.DAYS;
 
@@ -24,10 +25,8 @@ public class RecordService {
         this.teamRepository = teamRepository;
     }
 
-
-    @Transactional
-    public List<Record> findEmployeesWithLongestDeadline() {
-        List<Record> records = this.recordRepository.findAllByOrderByProjectId();
+    public List<Long> findEmployeesWithLongestDeadline() {
+        List<Record> records = this.recordRepository.findAllByOrderByProjectIdAscEmpIdAsc();
 
         for (int i = 0; i < records.size() - 1; i++) {
             for (int j = i + 1; j < records.size(); j++) {
@@ -50,7 +49,46 @@ public class RecordService {
                 }
             }
         }
-        return records;
+
+        // converting the string array to List with the IDs of the employees
+        String[] mostWorkingTeam = findMostWorkingTeam();
+        return Arrays.stream(mostWorkingTeam)
+                .map(Long::parseLong)
+                .collect(Collectors.toList());
+    }
+
+    public String[] findMostWorkingTeam() {
+        List<Team> teams = this.teamRepository.findAll();
+
+        Map<String, Long> employeesIDsByWorkingPeriod = new LinkedHashMap<>();
+
+        for (Team team : teams) {
+            Long emp1Id = team.getEmp1Id();
+            Long emp2Id = team.getEmp2Id();
+            Long workingPeriod = team.getWorkingPeriod();
+
+            // the string will be the key for the HashMap and the working period will be the value to the key
+            String employeesIDs = emp1Id + ", " + emp2Id;
+            if (!employeesIDsByWorkingPeriod.containsKey(employeesIDs)) {
+                employeesIDsByWorkingPeriod.put(employeesIDs, workingPeriod);
+            } else {
+                Long value = employeesIDsByWorkingPeriod.get(employeesIDs);
+                employeesIDsByWorkingPeriod.put(employeesIDs, value + workingPeriod);
+            }
+        }
+
+        // find the pair of workers with the greatest amount of working period
+        Map.Entry<String, Long> highestEntry = employeesIDsByWorkingPeriod
+                .entrySet()
+                .stream()
+                .max(Map.Entry.comparingByValue())
+                .orElse(null);
+
+        // get the ID's of the employees
+        String key = highestEntry.getKey();
+
+        return key.split(", ");
+
     }
 
     private long calculateWorkingPeriod(Record first, Record second) {

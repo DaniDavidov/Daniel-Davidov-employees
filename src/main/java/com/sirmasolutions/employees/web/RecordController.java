@@ -1,6 +1,7 @@
 package com.sirmasolutions.employees.web;
 
 import com.sirmasolutions.employees.model.entity.Record;
+import com.sirmasolutions.employees.model.entity.Team;
 import com.sirmasolutions.employees.repository.TeamRepository;
 import com.sirmasolutions.employees.service.RecordService;
 import org.springframework.stereotype.Controller;
@@ -22,9 +23,12 @@ public class RecordController {
 
     @GetMapping("/results")
     public String longestDeadline() {
-        List<Record> employeesWithLongestDeadline =
-                this.recordService.findEmployeesWithLongestDeadline();
 
-        return "index";
+        List<Long> employees = this.recordService.findEmployeesWithLongestDeadline();
+
+        List<Team> teamData = this.teamRepository.findAllByEmp1IdAndEmp2Id(employees.get(0), employees.get(1));
+
+
+        return "results";
     }
 }

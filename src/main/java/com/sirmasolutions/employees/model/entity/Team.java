@@ -6,9 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Getter
 @Setter
 @NoArgsConstructor
@@ -22,10 +19,10 @@ public class Team {
     private Long id;
 
     @Column(name = "emp1_ID", nullable = false)
-    private Long emp1ID;
+    private Long emp1Id;
 
     @Column(name = "emp2_ID", nullable = false)
-    private Long emp2ID;
+    private Long emp2Id;
 
     @Column(name = "project_id", nullable = false)
     private Long projectId;
@@ -34,9 +31,9 @@ public class Team {
     private Long workingPeriod;
 
 
-    public Team(Long emp1ID, Long emp2ID, Long projectId, long workingPeriod) {
-        this.emp1ID = emp1ID;
-        this.emp2ID = emp2ID;
+    public Team(Long emp1Id, Long emp2Id, Long projectId, long workingPeriod) {
+        this.emp1Id = emp1Id;
+        this.emp2Id = emp2Id;
         this.projectId = projectId;
         this.workingPeriod = workingPeriod;
     }
