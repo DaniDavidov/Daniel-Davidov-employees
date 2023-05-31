@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 
 @Getter
 @Setter
@@ -18,9 +20,7 @@ public class Project {
     @Id
     private Long id;
 
-    @ManyToOne
-    private Team team;
+    @ManyToMany
+    private List<Team> teams;
 
-    @Column(name = "working_period", nullable = false)
-    private Long workingPeriod;
 }

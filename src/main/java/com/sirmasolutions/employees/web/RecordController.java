@@ -8,11 +8,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import java.util.List;
 
 @Controller
-public class DeadlineController {
+public class RecordController {
 
     private final RecordService recordService;
 
-    public DeadlineController(RecordService deadlineService) {
+    public RecordController(RecordService deadlineService) {
         this.recordService = deadlineService;
     }
 

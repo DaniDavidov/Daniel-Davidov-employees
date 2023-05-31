@@ -6,6 +6,7 @@ import com.sirmasolutions.employees.model.entity.Team;
 import com.sirmasolutions.employees.repository.ProjectRepository;
 import com.sirmasolutions.employees.repository.RecordRepository;
 import com.sirmasolutions.employees.repository.TeamRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -30,10 +31,10 @@ public class RecordService {
     }
 
 
+    @Transactional
     public List<Record> findEmployeesWithLongestDeadline() {
         List<Record> records = this.recordRepository.findAllByOrderByProjectId();
 
-        List<Team> teams = new ArrayList<>();
         for (int i = 0; i < records.size() - 1; i++) {
             for (int j = i + 1; j < records.size(); j++) {
 
@@ -43,6 +44,7 @@ public class RecordService {
                 // checking if the two employees work on the same project
                 if (Objects.equals(first.getProjectId(), second.getProjectId())) {
 
+                    // the employees deadlines must overlap
                     if (!hasOverlap(first, second)) {
                         continue;
                     }
@@ -50,17 +52,28 @@ public class RecordService {
                     long workingPeriod = calculateWorkingPeriod(first, second);
 
                     Optional<Team> teamOptional = this.teamRepository.findByEmp1IDAndEmp2ID(first.getEmpId(), second.getEmpId());
-                    Team team = new Team(first.getEmpId(), second.getEmpId());
 
+                    Team team;
                     if (teamOptional.isEmpty()) {
+                        team = new Team(first.getEmpId(), second.getEmpId(), workingPeriod);
                         this.teamRepository.save(team);
+                    } else {
+                        team = teamOptional.get();
                     }
-                    Optional<Project> projectOptional = this.projectRepository.findById(first.getProjectId());
-                    if (projectOptional.isEmpty()) {
 
+                    Optional<Project> projectOptional = this.projectRepository.findById(first.getProjectId());
+
+                    Project project;
+                    if (projectOptional.isEmpty()) {
+                        project = new Project(first.getProjectId(), new ArrayList<>(List.of(team)));
+                        this.projectRepository.save(project);
+                    } else {
+                        project = projectOptional.get();
+                        List<Team> projectTeams = project.getTeams();
+                        projectTeams.add(team);
+                        project.setTeams(projectTeams);
+                        this.projectRepository.save(project);
                     }
-                    Project project = new Project(first.getProjectId(), team, workingPeriod);
-                    this.projectRepository.save(project);
                 }
             }
         }
@@ -105,4 +118,6 @@ public class RecordService {
                 && (first.getDateTo().isAfter(second.getDateFrom())
                 || first.getDateTo().isEqual(second.getDateFrom()));
     }
+
+
 }
