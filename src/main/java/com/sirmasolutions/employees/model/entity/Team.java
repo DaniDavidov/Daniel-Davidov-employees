@@ -27,16 +27,17 @@ public class Team {
     @Column(name = "emp2_ID", nullable = false)
     private Long emp2ID;
 
+    @Column(name = "project_id", nullable = false)
+    private Long projectId;
+
     @Column(name = "working_period", nullable = false)
     private Long workingPeriod;
 
-    @ManyToMany(mappedBy = "teams", targetEntity = Project.class)
-    private List<Project> projects;
 
-    public Team(Long emp1ID, Long emp2ID, long workingPeriod) {
+    public Team(Long emp1ID, Long emp2ID, Long projectId, long workingPeriod) {
         this.emp1ID = emp1ID;
         this.emp2ID = emp2ID;
+        this.projectId = projectId;
         this.workingPeriod = workingPeriod;
-        this.projects = new ArrayList<>();
     }
 }

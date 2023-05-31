@@ -1,19 +1,15 @@
 package com.sirmasolutions.employees.service;
 
-import com.sirmasolutions.employees.model.entity.Project;
 import com.sirmasolutions.employees.model.entity.Record;
 import com.sirmasolutions.employees.model.entity.Team;
-import com.sirmasolutions.employees.repository.ProjectRepository;
 import com.sirmasolutions.employees.repository.RecordRepository;
 import com.sirmasolutions.employees.repository.TeamRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 import static java.time.temporal.ChronoUnit.DAYS;
 
@@ -22,12 +18,10 @@ public class RecordService {
 
     private final RecordRepository recordRepository;
     private final TeamRepository teamRepository;
-    private final ProjectRepository projectRepository;
 
-    public RecordService(RecordRepository deadlineRepository, TeamRepository teamRepository, ProjectRepository projectRepository) {
+    public RecordService(RecordRepository deadlineRepository, TeamRepository teamRepository) {
         this.recordRepository = deadlineRepository;
         this.teamRepository = teamRepository;
-        this.projectRepository = projectRepository;
     }
 
 
@@ -51,29 +45,8 @@ public class RecordService {
 
                     long workingPeriod = calculateWorkingPeriod(first, second);
 
-                    Optional<Team> teamOptional = this.teamRepository.findByEmp1IDAndEmp2ID(first.getEmpId(), second.getEmpId());
-
-                    Team team;
-                    if (teamOptional.isEmpty()) {
-                        team = new Team(first.getEmpId(), second.getEmpId(), workingPeriod);
-                        this.teamRepository.save(team);
-                    } else {
-                        team = teamOptional.get();
-                    }
-
-                    Optional<Project> projectOptional = this.projectRepository.findById(first.getProjectId());
-
-                    Project project;
-                    if (projectOptional.isEmpty()) {
-                        project = new Project(first.getProjectId(), new ArrayList<>(List.of(team)));
-                        this.projectRepository.save(project);
-                    } else {
-                        project = projectOptional.get();
-                        List<Team> projectTeams = project.getTeams();
-                        projectTeams.add(team);
-                        project.setTeams(projectTeams);
-                        this.projectRepository.save(project);
-                    }
+                    Team team = new Team(first.getEmpId(), second.getEmpId(), first.getProjectId(), workingPeriod);
+                    this.teamRepository.save(team);
                 }
             }
         }
