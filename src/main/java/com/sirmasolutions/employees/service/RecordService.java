@@ -131,4 +131,11 @@ public class RecordService {
     }
 
 
+    public void cleanUpDatabase() {
+
+        if (this.teamRepository.count() > 0) {
+            this.teamRepository.deleteAll();
+            this.recordRepository.deleteAll();
+        }
+    }
 }

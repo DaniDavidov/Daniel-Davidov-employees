@@ -22,14 +22,11 @@ public class SeedService {
         try {
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
 
-                int counter = 0;
                 while ((line = reader.readLine()) != null) {
 
-                    if (counter == 0) {
-                        counter++;
+                    if (line.contains("EmpID, ProjectID")) {
                         continue;
                     }
-
                     String[] data = line.split(", ");
                     Long empId = Long.valueOf(data[0]);
                     Long projectId = Long.parseLong(data[1]);
