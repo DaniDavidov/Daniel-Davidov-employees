@@ -3,7 +3,7 @@ spring:
     driverClassName: com.mysql.cj.jdbc.Driver
     url: "jdbc:mysql://localhost:3306/employees?allowPublicKeyRetrieval=true&useSSL=false&createDatabaseIfNotExist=true"
     username: root
-    password: 181315durwo
+    password:
   jpa:
     # Choose either MySQL 8 or MySQL 5 below
     # For MySQL 8
