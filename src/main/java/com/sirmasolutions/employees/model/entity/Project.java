@@ -1,15 +1,11 @@
 package com.sirmasolutions.employees.model.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -17,14 +13,14 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Entity
 @Table(name = "projects")
-public class Project extends BaseEntity {
+public class Project {
 
-    @Column(name = "date_from", nullable = false)
-    private LocalDate dateFrom;
-
-    @Column(name = "date_to")
-    private LocalDate dateTo;
+    @Id
+    private Long id;
 
     @ManyToOne
-    private Employee employee;
+    private Team team;
+
+    @Column(name = "working_period", nullable = false)
+    private Long workingPeriod;
 }
